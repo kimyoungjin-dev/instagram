@@ -1,5 +1,5 @@
-import client from "../client";
 import jwt from "jsonwebtoken";
+import client from "../client";
 
 export const getUser = async (token) => {
   try {
@@ -7,23 +7,25 @@ export const getUser = async (token) => {
       return null;
     }
     const { id } = await jwt.verify(token, process.env.SECRET_KEY);
-    const user = client.user.findUnique({ where: { id } });
+    const user = await client.user.findUnique({ where: { id } });
     if (user) {
       return user;
     } else {
       return null;
     }
-  } catch (error) {
+  } catch {
     return null;
   }
 };
 
-export const protectUser = (ourResolver) => (root, args, context, info) => {
-  if (!context.loggedInUser) {
-    return {
-      ok: false,
-      error: "이 작업을 수행하려면 로그인하십시오.",
-    };
-  }
-  return ourResolver(root, args, context, info);
-};
+export function protectedResolver(ourResolver) {
+  return function (root, args, context, info) {
+    if (!context.loggedInUser) {
+      return {
+        ok: false,
+        error: "수정할수없습니다. 로그인후에 진행하세요",
+      };
+    }
+    return ourResolver(root, args, context, info);
+  };
+}
