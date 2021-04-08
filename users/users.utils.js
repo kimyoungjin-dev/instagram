@@ -17,3 +17,13 @@ export const getUser = async (token) => {
     return null;
   }
 };
+
+export const protectUser = (ourResolver) => (root, args, context, info) => {
+  if (!context.loggedInUser) {
+    return {
+      ok: false,
+      error: "이 작업을 수행하려면 로그인하십시오.",
+    };
+  }
+  return ourResolver(root, args, context, info);
+};
