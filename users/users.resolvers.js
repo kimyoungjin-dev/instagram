@@ -1,6 +1,8 @@
 export default {
   User: {
-    totalFollowing: () => 777,
-    totalFollowers: () => 666,
+    totalFollowing: (root) => {
+      console.log(root.email);
+      return 0;
+    },
   },
 };
