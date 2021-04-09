@@ -1,9 +1,8 @@
 import client from "../client";
-
 export default {
   User: {
-    totalFollowing: ({ id }) => {
-      return client.user.count({
+    totalFollowing: ({ id }) =>
+      client.user.count({
         where: {
           followers: {
             some: {
@@ -11,11 +10,9 @@ export default {
             },
           },
         },
-      });
-    },
-
-    totalFollowers: ({ id }) => {
-      return client.user.count({
+      }),
+    totalFollowers: ({ id }) =>
+      client.user.count({
         where: {
           following: {
             some: {
@@ -23,8 +20,7 @@ export default {
             },
           },
         },
-      });
-    },
+      }),
     isMe: ({ id }, _, { loggedInUser }) => {
       if (!loggedInUser) {
         return false;
@@ -36,11 +32,10 @@ export default {
       if (!loggedInUser) {
         return false;
       }
-      const existId = await client.user
-        .findUnique({ where: { username: loggedInUser.username } })
-        .following({ where: { id } });
-
-      return existId.length !== 0;
+      const exist = await client.user.count({
+        where: { username: loggedInUser.username, following: { some: { id } } },
+      });
+      return Boolean(exist);
     },
   },
 };
