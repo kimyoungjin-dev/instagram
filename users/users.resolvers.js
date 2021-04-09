@@ -31,5 +31,16 @@ export default {
       }
       return id === loggedInUser.id;
     },
+
+    isFollowing: async ({ id }, _, { loggedInUser }) => {
+      if (!loggedInUser) {
+        return false;
+      }
+      const existId = await client.user
+        .findUnique({ where: { username: loggedInUser.username } })
+        .following({ where: { id } });
+
+      return existId.length !== 0;
+    },
   },
 };
