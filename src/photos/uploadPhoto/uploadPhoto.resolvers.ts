@@ -1,31 +1,36 @@
-import client from "../../client";
 import { protectedResolver } from "../../users/users.utils";
 
 export default {
   Mutation: {
     uploadPhoto: protectedResolver(
-      async (_, { file, caption }, { loggedInUser }) => {
-        let hashtagObjs = [];
+      async (_, { file, caption }, { loggedInUser, client }) => {
+        if (!loggedInUser) {
+          return null;
+        }
+        console.log(loggedInUser);
+        let hashtagObj = [];
+        console.log(hashtagObj);
         if (caption) {
-          const hashtag = caption.match(/#[\w]+/g);
-          hashtagObjs = hashtag.map((item) => ({
-            where: { item },
-            create: { item },
+          //caption 에는 한글을 사용하지못한다.
+          const hashtags = caption.match(/#[\w]+/g);
+          hashtagObj = hashtags.map((hashtag) => ({
+            where: { hashtag },
+            create: { hashtag },
           }));
         }
-
-        return client.photo.create({
+        return await client.photo.create({
           data: {
             file,
             caption,
-            //유저 또한 connect를 해줘야한다.
             user: {
               connect: {
                 id: loggedInUser.id,
               },
             },
-            ...(hashtagObjs.length > 0 && {
-              hashtags: { connectOrCreate: hashtagObjs },
+            ...(hashtagObj.length > 0 && {
+              hashtags: {
+                connectOrCreate: hashtagObj,
+              },
             }),
           },
         });
