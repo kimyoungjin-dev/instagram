@@ -1,10 +1,8 @@
-import client from "../../client";
-
+import { Resolvers } from "../../types";
 //user의 follower 목록을 확인
-
-export default {
+const resovers: Resolvers = {
   Query: {
-    seeFollowers: async (_, { username, page }) => {
+    seeFollowers: async (_, { username, page }, { client }) => {
       //page는 필수값
       const ok = await client.user.findUnique({
         where: { username },
@@ -40,3 +38,4 @@ export default {
     },
   },
 };
+export default resovers;

@@ -1,4 +1,3 @@
-import client from "../../client";
 import { protectedResolver } from "../users.utils";
 
 //protectedResolver를 사용해준다.
@@ -8,7 +7,7 @@ import { protectedResolver } from "../users.utils";
 export default {
   Mutation: {
     unfollowUser: protectedResolver(
-      async (_, { username }, { loggedInUser }) => {
+      async (_, { username }, { loggedInUser, client }) => {
         //username(상희)가 존재하지않는다면, return false
         const ok = await client.user.findUnique({
           where: {

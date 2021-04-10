@@ -1,8 +1,8 @@
-import client from "../../client";
+import { Resolvers } from "../../types";
 
-export default {
+const resovers: Resolvers = {
   Query: {
-    searchUsers: async (_, { keyword, lastId }) => {
+    searchUsers: async (_, { keyword, lastId }, { client }) => {
       //findMany를 이용하여, 다수의 사용자를 검색 => startsWith함수를 사용해준다.
       const searchUser = await client.user.findMany({
         where: {
@@ -22,3 +22,4 @@ export default {
     },
   },
 };
+export default resovers;
