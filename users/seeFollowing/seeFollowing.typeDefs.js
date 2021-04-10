@@ -7,6 +7,6 @@ export default gql`
     following: [User]
   }
   type Query {
-    seeFollowing(username: String!, lastId: Int): SeeFollowingResult
+    seeFollowing(username: String!, lastId: Int): SeeFollowingResult!
   }
 `;

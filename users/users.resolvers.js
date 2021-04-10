@@ -1,26 +1,19 @@
 import client from "../client";
+
 export default {
   User: {
+    //아이디는 "영진"의 아이디이다.
+
     totalFollowing: ({ id }) =>
       client.user.count({
-        where: {
-          followers: {
-            some: {
-              id,
-            },
-          },
-        },
+        where: { followers: { some: { id } } },
       }),
+
     totalFollowers: ({ id }) =>
       client.user.count({
-        where: {
-          following: {
-            some: {
-              id,
-            },
-          },
-        },
+        where: { following: { some: { id } } },
       }),
+
     isMe: ({ id }, _, { loggedInUser }) => {
       if (!loggedInUser) {
         return false;
