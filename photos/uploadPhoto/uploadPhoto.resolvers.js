@@ -6,8 +6,10 @@ export default {
   Mutation: {
     uploadPhoto: protectedResolver(
       async (_, { file, caption }, { loggedInUser }) => {
+        //Regular Expression: 문자내에서 특정 문자를 추출한다.
         if (caption) {
-          ///
+          const hashtag = caption.match(/#[\w]+/g);
+          console.log(hashtag);
         }
       }
     ),
