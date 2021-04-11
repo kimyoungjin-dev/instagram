@@ -12,17 +12,45 @@ const resolvers: Resolvers = {
   Mutation: {
     toggleLike: protectedResolver(
       async (_, { id }, { loggedInUser, client }) => {
-        //client.photo => 플라즈마 photo에서 만약 사진의 id를 찾지못하면 return false
-        const ok = await client.photo.findUnique({
+        const photo = await client.photo.findUnique({
           where: { id },
         });
-        console.log(ok);
-        if (!ok) {
+        console.log(photo); //"출력" obj 아이디 : 11
+        //client.photo => 플라즈마 photo에서 만약 사진의 id를 찾지못하면 return false
+        if (!photo) {
           return {
             ok: false,
             error: "Cant found Photo",
           };
         }
+        //like를 정의
+
+        //코드재활용
+        const likeWhere = {
+          photoId_userId: {
+            userId: loggedInUser.id,
+            photoId: id,
+          },
+        };
+
+        const like = await client.like.findUnique({ where: likeWhere });
+        //like 가 존재하는경우 삭제
+        if (like) {
+          await client.like.delete({
+            where: likeWhere,
+          });
+          //like 가 존재하지않는경우 생성
+        } else {
+          await client.like.create({
+            data: {
+              user: { connect: { id: loggedInUser.id } }, //좋아요가 없는 경우 id는 로그인한 유저의 아이디
+              photo: { connect: { id: photo.id } }, //사진에 좋아요가 없는경우에는 좋아요를 누를 "그!사진"의 아이디를 준다
+            },
+          });
+        }
+        return {
+          ok: true,
+        };
       }
     ),
   },
