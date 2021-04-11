@@ -31,6 +31,7 @@ const resolvers: Resolvers = {
       });
       return Boolean(exist);
     },
+
     photos: ({ id }, _, { client }) =>
       client.user.findUnique({ where: { id } }).photos(),
   },
