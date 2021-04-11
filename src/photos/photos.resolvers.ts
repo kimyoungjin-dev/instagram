@@ -9,6 +9,11 @@ const resolver: Resolvers = {
       //root의 id는 현재 내가찾고자하는 사진의 아이디이다. 이 아이디와 일치하는 아이디는 hashtag의 photos의 id 를 가지고있는 해쉬태그들만을 모아서 값을 보여준다.
       return client.hashtag.findMany({ where: { photos: { some: { id } } } });
     },
+    //사진의 좋아요 갯수랑 세는 likes를 작성
+    likes: ({ id }, _, { client }) =>
+      client.like.count({
+        where: { photoId: id },
+      }),
   },
 
   Hashtag: {
