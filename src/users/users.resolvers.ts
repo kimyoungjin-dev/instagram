@@ -1,4 +1,3 @@
-import client from "../client";
 import { Resolvers } from "../types";
 
 const resolvers: Resolvers = {
@@ -14,7 +13,7 @@ const resolvers: Resolvers = {
         where: { following: { some: { id } } },
       }),
 
-    isMe: ({ id }, _, { loggedInUser, client }) => {
+    isMe: ({ id }, _, { loggedInUser }) => {
       if (!loggedInUser) {
         return false;
       }
@@ -22,9 +21,11 @@ const resolvers: Resolvers = {
     },
 
     isFollowing: async ({ id }, _, { loggedInUser, client }) => {
+      console.log(id, loggedInUser.username);
       if (!loggedInUser) {
         return false;
       }
+      //  seeProfile(username:"sanghee") => "상희"의 프로필을 보고 =>기준을 정한다(username=영진) =>"영진" following 목록에 "상희"의 id가있는지 체크한다.
       const exist = await client.user.count({
         where: { username: loggedInUser.username, following: { some: { id } } },
       });
