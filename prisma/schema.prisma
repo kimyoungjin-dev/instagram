@@ -11,20 +11,21 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   firstName String
   lastName  String?
-  username  String   @unique
-  email     String   @unique
+  username  String    @unique
+  email     String    @unique
   password  String
   bio       String?
   avatar    String?
   photos    Photo[]
   likes     Like[]
-  followers User[]   @relation("FollowRelation", references: [id])
-  following User[]   @relation("FollowRelation", references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  followers User[]    @relation("FollowRelation", references: [id])
+  following User[]    @relation("FollowRelation", references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Comment   Comment[]
 }
 
 model Photo {
@@ -37,6 +38,7 @@ model Photo {
   likes     Like[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  Comment   Comment[]
 }
 
 model Hashtag {
@@ -57,4 +59,18 @@ model Like {
   updatedAt DateTime @updatedAt
 
   @@unique([photoId, userId])
+}
+
+//comment 는 유저가 업로드하기때문에 user를 작성
+// and photo 와 연결 되어있다.
+//payload = 커맨트의 내용
+model Comment {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  photo     Photo    @relation(fields: [photoId], references: [id])
+  payload   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  photoId   Int
 }
