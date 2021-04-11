@@ -1,4 +1,5 @@
 import { protectedResolver } from "../../users/users.utils";
+import { processHashtags } from "../photo.utils";
 
 export default {
   Mutation: {
@@ -11,13 +12,9 @@ export default {
         let hashtagObj = [];
         console.log(hashtagObj);
         if (caption) {
+          hashtagObj = processHashtags(caption);
           //caption 에는 한글을 사용하지못한다.
           //hashtag:hashtag임에 주의하자
-          const hashtags = caption.match(/#[\w]+/g);
-          hashtagObj = hashtags.map((hashtag) => ({
-            where: { hashtag },
-            create: { hashtag },
-          }));
         }
         return await client.photo.create({
           data: {
