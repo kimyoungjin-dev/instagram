@@ -1,13 +1,14 @@
 import { Resolvers } from "../../types";
 
 const resolvers: Resolvers = {
-  //photo의 다양한 caption 에서 keyword로 검색해서 찾는다
   Query: {
-    searchPhotos: (_, { keyword }, { client }) =>
+    searchPhotos: (_, { keyword, lastId }, { client }) =>
       client.photo.findMany({
         where: { caption: { startsWith: keyword } },
+        take: 5,
+        skip: lastId ? 1 : 0,
+        ...(lastId && { cursor: { id: lastId } }),
       }),
   },
 };
-
 export default resolvers;
