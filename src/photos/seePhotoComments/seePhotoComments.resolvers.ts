@@ -4,7 +4,7 @@ const resolvers: Resolvers = {
   Query: {
     seePhotoComments: (_, { id, lastId }, { client }) =>
       client.comment.findMany({
-        where: { photo: id },
+        where: { photoId: id },
         take: 5,
         skip: lastId ? 1 : 0,
         ...(lastId && { cursor: { id: lastId } }),
