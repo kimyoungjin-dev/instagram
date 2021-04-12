@@ -4,12 +4,18 @@ export default {
   Mutation: {
     createComment: protectedResolver(
       async (_, { photoId, payload }, { loggedInUser, client }) => {
-        const ok = await client.photo.findUnique({
+        if (!loggedInUser) {
+          return {
+            ok: false,
+            error: "There is no user information.",
+          };
+        }
+        const findPhoto = await client.photo.findUnique({
           where: { id: photoId },
           select: { id: true },
         });
 
-        if (!ok) {
+        if (!findPhoto) {
           return {
             ok: false,
             error: "Can`t find Photo",
