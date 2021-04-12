@@ -1,35 +1,25 @@
-import { Resolvers } from "../../types";
 import { protectedResolver } from "../../users/users.utils";
 
-const resolvers: Resolvers = {
+//유저가 누구인지 알아야하기때문에 protectedResolver 사용
+
+export default {
   Query: {
-    seeFeed: protectedResolver((_, { lastId }, { loggedInUser, client }) =>
-      client.photo.findMany({
-        where: {
-          //OR 속성은 둘다 반환한다
-          OR: [
-            {
-              user: {
-                followers: {
-                  some: {
-                    id: loggedInUser.id,
-                  },
-                },
-              },
-            },
-            {
-              userId: loggedInUser.id,
-            },
-          ],
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 5,
-        skip: lastId ? 1 : 0,
-        ...(lastId && { cursor: { id: lastId } }),
-      })
+    seeFeed: protectedResolver(
+      async (_, { page }, { client, loggedInUser }) =>
+        //"photo"를 찾을때 나의 아이디가 팔로워 목록에있는 유저의 photo를 찾으면 된다.
+        await client.photo.findMany({
+          where: {
+            OR: [
+              { user: { followers: { some: { id: loggedInUser.id } } } },
+              //userId을 사용해준다.
+              { userId: loggedInUser.id },
+            ],
+          },
+          take: 5,
+          skip: (page - 1) * 5,
+
+          orderBy: { createdAt: "desc" },
+        })
     ),
   },
 };
-export default resolvers;

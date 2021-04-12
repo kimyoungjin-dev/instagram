@@ -8,25 +8,21 @@ export default {
           where: { id: photoId },
           select: { id: true },
         });
+
         if (!ok) {
           return {
             ok: false,
-            error: "Cant found Photo",
+            error: "Can`t find Photo",
           };
         }
-
         await client.comment.create({
-          //생성
           data: {
+            //payload, user, photo 필수이다.
             payload,
             user: { connect: { id: loggedInUser.id } },
             photo: { connect: { id: photoId } },
           },
         });
-
-        return {
-          ok: true,
-        };
       }
     ),
   },

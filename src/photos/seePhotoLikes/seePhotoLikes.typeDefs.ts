@@ -6,4 +6,4 @@ export default gql`
   }
 `;
 
-//id 를 받아서 "Like"배열을 return
+//사진의 아이디를 받아서 유저를 반환한다.

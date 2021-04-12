@@ -10,3 +10,5 @@ export default gql`
     toggleLike(id: Int!): toggleLikeResult!
   }
 `;
+
+//id = photo id
