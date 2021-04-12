@@ -15,7 +15,7 @@ const resolvers: Resolvers = {
         const photo = await client.photo.findUnique({
           where: { id },
         });
-        console.log(photo); //"출력" obj 아이디 : 11
+
         //client.photo => 플라즈마 photo에서 만약 사진의 id를 찾지못하면 return false
         if (!photo) {
           return {

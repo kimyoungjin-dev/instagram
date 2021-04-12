@@ -32,7 +32,7 @@ const resolvers: Resolvers = {
       return Boolean(exist);
     },
 
-    photos: ({ id }, _, { client }) =>
+    photos: ({ id }, __, { client }) =>
       client.user.findUnique({ where: { id } }).photos(),
   },
 };
