@@ -4,11 +4,18 @@ export default {
   Mutation: {
     toggleLike: protectedResolver(
       async (_, { id }, { client, loggedInUser }) => {
-        const photo = await client.photo.findUnique({
+        if (!loggedInUser) {
+          return {
+            ok: false,
+            error: "There is no user information.",
+          };
+        }
+
+        const findPhoto = await client.photo.findUnique({
           where: { id },
         });
-        console.log(photo);
-        if (!photo) {
+
+        if (!findPhoto) {
           return {
             ok: false,
             error: "Cant find Photo",
@@ -31,7 +38,7 @@ export default {
             data: {
               user: { connect: { id: loggedInUser.id } },
               //photo.id 임에 주의하자.
-              photo: { connect: { id: photo.id } },
+              photo: { connect: { id: findPhoto.id } },
             },
           });
         }
