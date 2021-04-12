@@ -13,7 +13,6 @@ const resolver: Resolvers = {
     //사진의 좋아요 갯수랑 세는 likes를 작성
     // photoId = photo id 와 같은 like 갯수를 센다.
     likes: ({ id }, _, { client }) => {
-      console.log(id); //11
       return client.like.count({
         where: { photoId: id }, //11번의 아이디를 가지고있는 사진의 like 개수를 센다.
       });
@@ -26,10 +25,23 @@ const resolver: Resolvers = {
       }),
   },
 
+  //#avocado :id=15, 15아이디를 photo()에서 찾는다.
   Hashtag: {
-    //id 는 food 라는 해쉬태그 번호이다. hash태그 마다 해당 id의 해쉬태그 갯수를 센다.
-    totalPhotos: ({ id }, _, { client }) =>
-      client.photo.count({ where: { hashtags: { some: { id } } } }),
+    photos: ({ id }, { page }, { client }) =>
+      client.hashtag
+        .findUnique({
+          where: { id },
+        })
+        .photos({
+          take: 5,
+          skip: (page - 1) * 5,
+        }),
+
+    //하나의 #에 포함된 사진의 갯수를 센다
+    totalPhotos: ({ id }, __, { client }) =>
+      client.photo.count({
+        where: { hashtags: { some: { id } } },
+      }),
   },
 };
 
