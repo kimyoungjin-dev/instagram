@@ -5,6 +5,12 @@ export default {
   Mutation: {
     editPhoto: protectedResolver(
       async (_, { id, caption }, { loggedInUser, client }) => {
+        if (!loggedInUser) {
+          return {
+            ok: false,
+            error: "There is no user information.",
+          };
+        }
         const prevPhoto = await client.photo.findFirst({
           where: { id, userId: loggedInUser.id },
           //include 를 이용해서 hastag를 포함하시고 , hashtag안에있는 hashtag만을 가져온다.
