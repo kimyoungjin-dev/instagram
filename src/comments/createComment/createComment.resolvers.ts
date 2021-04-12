@@ -29,6 +29,9 @@ export default {
             photo: { connect: { id: photoId } },
           },
         });
+        return {
+          ok: true,
+        };
       }
     ),
   },
