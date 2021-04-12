@@ -1,5 +1,7 @@
 import { Resolvers } from "../../types";
 
+//seePhotoComments를 확인할때에는 seeFeed로 확인
+
 const resolvers: Resolvers = {
   Query: {
     //선택한 사진의 모든 comments를 가지고온다
