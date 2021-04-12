@@ -21,6 +21,13 @@ const resolver: Resolvers = {
       client.comment.count({
         where: { photoId: id },
       }),
+    //loggedInUser는 항상 체크를 해주어야한다.
+    isMine: ({ userId }, _, { loggedInUser }) => {
+      if (!loggedInUser) {
+        return false;
+      }
+      return userId === loggedInUser.id;
+    },
   },
 
   //#avocado :id=15, 15아이디를 photo()에서 찾는다.
