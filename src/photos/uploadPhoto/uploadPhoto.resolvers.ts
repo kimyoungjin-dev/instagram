@@ -8,13 +8,11 @@ export default {
         if (!loggedInUser) {
           return null;
         }
-        console.log(loggedInUser);
+        //caption 에는 한글을 사용하지못한다.
+        //hashtag:hashtag임에 주의하자
         let hashtagObj = [];
-        console.log(hashtagObj);
         if (caption) {
           hashtagObj = processHashtags(caption);
-          //caption 에는 한글을 사용하지못한다.
-          //hashtag:hashtag임에 주의하자
         }
         return await client.photo.create({
           data: {
