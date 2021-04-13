@@ -5,6 +5,8 @@ export default gql`
     ok: Boolean!
     error: String
     searchUser: [User]
+    totalUser: Int
+    totalPages: Int
   }
 
   type Query {
