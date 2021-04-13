@@ -2,8 +2,8 @@ import { Resolvers } from "../../types";
 
 const resolvers: Resolvers = {
   Query: {
-    seeHashtag: (_, { hashtag }, { client }) =>
-      client.hashtag.findUnique({
+    seeHashtag: async (_, { hashtag }, { client }) =>
+      await client.hashtag.findUnique({
         where: { hashtag },
       }),
   },

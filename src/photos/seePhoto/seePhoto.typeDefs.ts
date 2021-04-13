@@ -6,5 +6,4 @@ export default gql`
   }
 `;
 
-//사진을 찾지못할수도있기때문에 required를 하지않는다
-//"Photo"는 "user" "hashtags" 둘다 작성해주어야 한다.
+// 사진을 찾지못할수도있기때문에 Photo에 required를 하지않는다

@@ -1,26 +1,21 @@
 import { protectedResolver } from "../users.utils";
 
-//protectedResolver를 사용해준다.
-
-// username:상희
-// loggedInUser : 영진
 export default {
   Mutation: {
     unfollowUser: protectedResolver(
       async (_, { username }, { loggedInUser, client }) => {
-        //username(상희)가 존재하지않는다면, return false
-        const ok = await client.user.findUnique({
+        const checkUser = await client.user.findUnique({
           where: {
             username,
           },
+          select: { id: true },
         });
-        if (!ok) {
+        if (!checkUser) {
           return {
             ok: false,
-            error: "Can find User",
+            error: "Can`t find User",
           };
         }
-
         await client.user.update({
           where: {
             id: loggedInUser.id,
@@ -28,7 +23,6 @@ export default {
           data: {
             following: {
               disconnect: {
-                //connect 반대
                 username,
               },
             },

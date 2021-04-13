@@ -1,5 +1,5 @@
-import * as bcrypt from "bcrypt";
 import { Resolvers } from "../../types";
+import * as bcrypt from "bcrypt";
 
 const resolvers: Resolvers = {
   Mutation: {
@@ -9,23 +9,28 @@ const resolvers: Resolvers = {
       { client }
     ) => {
       try {
-        const existringUser = await client.user.findFirst({
+        const existUser = await client.user.findFirst({
           where: {
             OR: [
               {
-                username,
+                email,
               },
               {
-                email,
+                username,
               },
             ],
           },
         });
-        if (existringUser) {
-          throw new Error("이미 계정이 존재합니다");
+        if (existUser) {
+          return {
+            ok: false,
+            error: "이미계정이 존재합니다",
+          };
         }
+
         const uglyPassword = await bcrypt.hash(password, 10);
         await client.user.create({
+          //data 에는 필수조건들을 넣어줘야한다.
           data: {
             firstName,
             lastName,
@@ -40,10 +45,11 @@ const resolvers: Resolvers = {
       } catch (error) {
         return {
           ok: false,
-          error: "Cant create account",
+          error: "Can't create an account.",
         };
       }
     },
   },
 };
+
 export default resolvers;

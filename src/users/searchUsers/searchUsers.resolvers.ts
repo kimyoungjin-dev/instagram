@@ -1,25 +1,33 @@
 import { Resolvers } from "../../types";
 
-const resovers: Resolvers = {
+const resolvers: Resolvers = {
   Query: {
     searchUsers: async (_, { keyword, lastId }, { client }) => {
-      //findMany를 이용하여, 다수의 사용자를 검색 => startsWith함수를 사용해준다.
       const searchUser = await client.user.findMany({
         where: {
-          username: {
-            startsWith: keyword.toLowerCase(),
-          },
+          username: { contains: keyword.toLowerCase() },
         },
-        take: 5,
+        take: 1,
         skip: lastId ? 1 : 0,
         ...(lastId && { cursor: { id: lastId } }),
+      });
+
+      const totalCount = await client.user.count({
+        where: {
+          username: {
+            contains: keyword.toLowerCase(),
+          },
+        },
       });
 
       return {
         ok: true,
         searchUser,
+        totalUser: Math.ceil(totalCount),
+        totalPages: Math.ceil(totalCount / 5),
       };
     },
   },
 };
-export default resovers;
+
+export default resolvers;

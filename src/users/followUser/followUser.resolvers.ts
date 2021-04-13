@@ -1,23 +1,26 @@
-import { Resolvers } from "../../types";
 import { protectedResolver } from "../users.utils";
 
-//username : 상희
-//loggedInUser.username : 영진
-const resolvers: Resolvers = {
+// 접근방법 : user를 찾는다. => 유저가 존재하지않는다면 return false! => update를 사용해준다. (업데이트유저 : user1) (connect : user2)
+export default {
   Mutation: {
     followUser: protectedResolver(
       async (_, { username }, { loggedInUser, client }) => {
-        //유저가 존재하는지 체크를 먼저한다.
-        console.log(username, loggedInUser.username);
-        const ok = await client.user.findUnique({ where: { username } });
-        if (!ok) {
+        const checkUser = await client.user.findUnique({
+          where: {
+            username,
+          },
+          //id 의 정보만을 가져온다.
+          select: { id: true },
+        });
+        console.log(checkUser);
+        if (!checkUser) {
           return {
             ok: false,
-            error: "User is Not exist",
+            error: "Cant find User",
           };
         }
-        //update를 사용한다는것에 주의하자
         await client.user.update({
+          //누가 팔로윙을 할꺼냐" => where
           where: {
             id: loggedInUser.id,
           },
@@ -36,4 +39,3 @@ const resolvers: Resolvers = {
     ),
   },
 };
-export default resolvers;

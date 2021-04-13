@@ -1,30 +1,32 @@
+import { Resolvers } from "../../types";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import { Resolvers } from "../../types";
 
 const resolvers: Resolvers = {
   Mutation: {
     login: async (_, { username, password }, { client }) => {
-      const checkUser = await client.user.findFirst({ where: { username } });
-      if (!checkUser) {
+      //먼저 유저를 찾는다.
+      //findFirst? findUnique?
+      const findUser = await client.user.findUnique({
+        where: { username },
+      });
+      //유저를 발견 못할경우
+      if (!findUser) {
         return {
           ok: false,
-          error: "유저를 찾을수가없습니다.",
+          error: "Cant find User",
         };
       }
-
-      const checkPassword = await bcrypt.compare(password, checkUser.password);
+      //비밀번호 체크
+      const checkPassword = await bcrypt.compare(password, findUser.password);
       if (!checkPassword) {
         return {
           ok: false,
-          error: "패스워드가 틀렸습니다.",
+          error: "Passwords do not match.",
         };
       }
-
-      const token = await jwt.sign(
-        { id: checkUser.id },
-        process.env.SECRET_KEY
-      );
+      //signd의 {} 주의
+      const token = await jwt.sign({ id: findUser.id }, process.env.SECRET_KEY);
       return {
         ok: true,
         token,
@@ -32,4 +34,5 @@ const resolvers: Resolvers = {
     },
   },
 };
+
 export default resolvers;

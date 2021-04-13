@@ -30,5 +30,3 @@ export default gql`
     updatedAt: String!
   }
 `;
-
-//model 안에 있는 Like 값을 모두 적어줄 필요는 없다.

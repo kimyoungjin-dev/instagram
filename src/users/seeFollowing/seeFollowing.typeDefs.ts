@@ -6,6 +6,7 @@ export default gql`
     error: String
     following: [User]
   }
+
   type Query {
     seeFollowing(username: String!, lastId: Int): SeeFollowingResult!
   }
