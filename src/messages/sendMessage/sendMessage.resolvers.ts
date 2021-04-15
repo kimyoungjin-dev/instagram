@@ -1,3 +1,5 @@
+import { NEW_MESSAGE } from "../../constans";
+import pubSub from "../../pubsub";
 import { protectedResolver } from "../../users/users.utils";
 //접근 방법 :
 //조건 1)userId가 존재하는경우 => user를 찾는다 => room을 만든다 => 새로운 메시지를 만든다.
@@ -47,8 +49,8 @@ export default {
           }
         }
 
-        await client.message.create({
-          //메시지를 만들면  => room을 연결 and 유저를 연결!
+        //메시지를 만들면  => room을 연결 and 유저를 연결!
+        const message = await client.message.create({
           data: {
             payload,
             room: {
@@ -63,6 +65,10 @@ export default {
             },
           },
         });
+        //event publish 해보자
+        //triggerName = NEW_MESSAGE
+        //payLoad = Obj
+        pubSub.publish(NEW_MESSAGE, { roomUpdates: { ...message } });
 
         return {
           ok: true,
