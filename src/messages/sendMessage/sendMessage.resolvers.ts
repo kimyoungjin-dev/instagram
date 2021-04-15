@@ -5,6 +5,7 @@ import { protectedResolver } from "../../users/users.utils";
 export default {
   Mutation: {
     sendMessage: protectedResolver(
+      //userId : 내가 보낼 상대방이 아이디
       async (_, { payload, roomId, userId }, { client, loggedInUser }) => {
         let room = null;
         if (userId) {
@@ -33,11 +34,12 @@ export default {
             },
           });
         } else if (roomId) {
+          //roomId x room o
           room = await client.room.findUnique({
             where: { id: roomId },
             select: { id: true },
           });
-          if (!roomId) {
+          if (!room) {
             return {
               ok: false,
               error: "Room not found.",
