@@ -12,13 +12,17 @@ export default {
         let room = null;
         if (userId) {
           const user = await client.user.findUnique({
-            where: { id: userId },
-            select: { id: true },
+            where: {
+              id: userId,
+            },
+            select: {
+              id: true,
+            },
           });
           if (!user) {
             return {
               ok: false,
-              error: "The user does not exist.",
+              error: "This user does not exist.",
             };
           }
           room = await client.room.create({
@@ -26,20 +30,23 @@ export default {
               users: {
                 connect: [
                   {
-                    id: loggedInUser.id,
+                    id: userId,
                   },
                   {
-                    id: userId,
+                    id: loggedInUser.id,
                   },
                 ],
               },
             },
           });
         } else if (roomId) {
-          //roomId x room o
           room = await client.room.findUnique({
-            where: { id: roomId },
-            select: { id: true },
+            where: {
+              id: roomId,
+            },
+            select: {
+              id: true,
+            },
           });
           if (!room) {
             return {
@@ -50,6 +57,7 @@ export default {
         }
 
         //메시지를 만들면  => room을 연결 and 유저를 연결!
+
         const message = await client.message.create({
           data: {
             payload,
@@ -65,10 +73,6 @@ export default {
             },
           },
         });
-        //event publish 해보자
-        //triggerName = NEW_MESSAGE
-        //payLoad = Obj roomUpdates:{...message}
-        //withFilter의 payload : { roomUpdates: { ...message }
         pubSub.publish(NEW_MESSAGE, { roomUpdates: { ...message } });
         return {
           ok: true,

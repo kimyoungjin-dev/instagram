@@ -25,19 +25,15 @@ const apollo = new ApolloServer({
       const {
         connection: { context },
       } = ctx;
-      return {
-        loggedInUser: context.loggedInUser,
-      };
+      return { loggedInUser: context.loggedInUser };
     }
   },
   //onConnect을 이용 => user 인증한다.
   subscriptions: {
-    //onConnect 의 첫번째인자 token을 가지고있다. 유저가 무언가를 시도하려고할때 한번만 발생한다.
-    onConnect: async ({ token }: { token: string }) => {
+    onConnect: async ({ token }: { token?: string }) => {
       if (!token) {
-        throw new Error("You can`t listen.");
+        throw new Error("You can`t listen");
       }
-      //리스닝 을 하는사람이 누구인지 알게된다.
       const loggedInUser = await getUser(token);
       return {
         loggedInUser,
