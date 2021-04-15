@@ -5,11 +5,16 @@ import { protectedResolver } from "../../users/users.utils";
 //채팅방의 아이디 + 로그인된 유저의 아디
 export default {
   Query: {
-    seeRooms: protectedResolver(
-      async (_, { id }, { loggedInUser, client }) =>
-        await client.room.findMany({
-          where: { id, users: { some: { id: loggedInUser.id } } },
-        })
+    seeRooms: protectedResolver(async (_, __, { client, loggedInUser }) =>
+      client.room.findMany({
+        where: {
+          users: {
+            some: {
+              id: loggedInUser.id,
+            },
+          },
+        },
+      })
     ),
   },
 };
