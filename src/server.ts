@@ -14,13 +14,35 @@ const PORT = process.env.PORT;
 const apollo = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({ req }) => {
-    if (req) {
+  //ctx를 사용해준 이유는 context는 http // websocket이 될수도 있기 때문이다.
+  context: async (ctx) => {
+    if (ctx.req) {
       return {
-        loggedInUser: await getUser(req.headers.token),
+        loggedInUser: await getUser(ctx.req.headers.token),
         client,
       };
+    } else {
+      const {
+        connection: { context },
+      } = ctx;
+      return {
+        loggedInUser: context.loggedInUser,
+      };
     }
+  },
+  //onConnect을 이용 => user 인증한다.
+  subscriptions: {
+    //onConnect 의 첫번째인자 token을 가지고있다. 유저가 무언가를 시도하려고할때 한번만 발생한다.
+    onConnect: async ({ token }: { token: string }) => {
+      if (!token) {
+        throw new Error("You can`t listen.");
+      }
+      //리스닝 을 하는사람이 누구인지 알게된다.
+      const loggedInUser = await getUser(token);
+      return {
+        loggedInUser,
+      };
+    },
   },
 });
 
