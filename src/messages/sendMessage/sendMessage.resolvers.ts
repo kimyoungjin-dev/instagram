@@ -67,9 +67,9 @@ export default {
         });
         //event publish 해보자
         //triggerName = NEW_MESSAGE
-        //payLoad = Obj
+        //payLoad = Obj roomUpdates:{...message}
+        //withFilter의 payload : { roomUpdates: { ...message }
         pubSub.publish(NEW_MESSAGE, { roomUpdates: { ...message } });
-
         return {
           ok: true,
         };
