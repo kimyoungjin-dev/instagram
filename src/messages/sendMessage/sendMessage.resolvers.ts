@@ -5,52 +5,48 @@ import { protectedResolver } from "../../users/users.utils";
 export default {
   Mutation: {
     sendMessage: protectedResolver(
-      async (_, { payload, roomId, userId }, { loggedInUser, client }) => {
+      async (_, { payload, roomId, userId }, { client, loggedInUser }) => {
         let room = null;
         if (userId) {
           const user = await client.user.findUnique({
-            where: {
-              id: userId,
-            },
+            where: { id: userId },
             select: { id: true },
           });
-          if (!userId) {
+          if (!user) {
             return {
               ok: false,
-              error: "Cant exist User",
+              error: "The user does not exist.",
             };
           }
-          //유저가 존재를 하고 메시지를 보내는 경우에 "room"을 만든다.
           room = await client.room.create({
             data: {
               users: {
                 connect: [
                   {
-                    id: user.id,
+                    id: loggedInUser.id,
                   },
                   {
-                    id: loggedInUser.id,
+                    id: userId,
                   },
                 ],
               },
             },
           });
-          //room의 아이디가 존재하는경우 roomId를 찾는다.
         } else if (roomId) {
           room = await client.room.findUnique({
             where: { id: roomId },
             select: { id: true },
           });
-
-          //만약 room 이 존재하지않는다면 return false
-          if (!room) {
+          if (!roomId) {
             return {
               ok: false,
-              error: "room not find",
+              error: "Room not found.",
             };
           }
         }
+
         await client.message.create({
+          //메시지를 만들면  => room을 연결 and 유저를 연결!
           data: {
             payload,
             room: {
