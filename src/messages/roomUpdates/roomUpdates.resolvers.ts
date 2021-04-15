@@ -7,9 +7,13 @@ export default {
   Subscription: {
     roomUpdates: {
       subscribe: async (root, args, context, info) => {
-        const room = await client.room.findUnique({
+        //findUnique => findFirst , users 에서 id :loggedInUser.id로 설정해준다
+        const room = await client.room.findFirst({
           where: {
+            //해당 id의 방을 찾는다
             id: args.id,
+            //room에 리스니 하려고 하하는 user가 있는지 체크
+            users: { some: { id: context.loggedInUser.id } },
           },
           select: { id: true },
         });
@@ -18,11 +22,21 @@ export default {
           throw new Error("You shall not see this");
         }
         //만약 room이 존재하지않는다면 => roomUpdate를 리스닝 하지못하도록 작동
-        //아래 return 부분에는 function을 리턴하는것이 아닌, function을 불러야한다.
+        //subscribe는 아래 return 부분에는 function을 리턴하는것이 아닌, function을 호출한다.
         return withFilter(
           () => pubsub.asyncIterator(NEW_MESSAGE),
-          ({ roomUpdates }, { id }) => {
-            return roomUpdates.roomId === id;
+          async ({ roomUpdates }, { id }, { loggedInUser }) => {
+            //roomUpdates.roomId는 sendMessage로 부터 publish할때 온다.
+            if (roomUpdates.roomId === id) {
+              const room = await client.room.findFirst({
+                where: { id, users: { some: { id: loggedInUser.id } } },
+                select: { id: true },
+              });
+              if (!room) {
+                return false;
+              }
+            }
+            return true;
           }
         )(root, args, context, info);
       },
