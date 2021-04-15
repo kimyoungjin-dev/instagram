@@ -1,5 +1,6 @@
 import { Resolvers } from "../types";
 
+//채팅방 안에 상황보여준다고 이해
 const resolvers: Resolvers = {
   Room: {
     //해당 room에 속해있는 user들을 보여준다.
