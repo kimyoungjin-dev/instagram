@@ -25,6 +25,7 @@ export default {
               error: "This user does not exist.",
             };
           }
+
           room = await client.room.create({
             data: {
               users: {
