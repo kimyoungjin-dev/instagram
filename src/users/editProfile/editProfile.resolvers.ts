@@ -1,4 +1,3 @@
-import { createWriteStream } from "fs";
 import * as bcrypt from "bcrypt";
 import { protectedResolver } from "../users.utils";
 import { uploadToS3 } from "../../shared/shared.utils";
