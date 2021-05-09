@@ -25,7 +25,6 @@ export function protectedResolver(ourResolver: Resolver) {
   return function (root, args, context, info) {
     if (!context.loggedInUser) {
       const query = info.operation.operation === "query";
-      console.log(query);
       if (query) {
         return null;
       } else {
