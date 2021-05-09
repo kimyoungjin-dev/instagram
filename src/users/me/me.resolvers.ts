@@ -2,10 +2,11 @@ import { protectedResolver } from "../users.utils";
 
 export default {
   Query: {
-    me: protectedResolver((_, __, { loggedInUser, client }) =>
-      client.user.findUnique({
-        where: { id: loggedInUser.id },
-      })
+    me: protectedResolver(
+      async (_, __, { loggedInUser, client }) =>
+        await client.user.findUnique({
+          where: { id: loggedInUser.id },
+        })
     ),
   },
 };
