@@ -32,9 +32,8 @@ const resolver: Resolvers = {
     //로그인이 되어있지않는다면 좋아요를 누를수없다.
     //photo로 부터 아이디를 얻고,
     isLiked: async ({ id }, _, { loggedInUser, client }) => {
-      if (!loggedInUser) {
-        return false;
-      }
+      if (!loggedInUser) return false;
+
       const ok = await client.like.findUnique({
         where: {
           photoId_userId: {
