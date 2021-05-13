@@ -24,6 +24,7 @@ const resolver: Resolvers = {
 
     //photo의 id가 photo의 id인 comments를 찾는다. and comment의 user 정보도 export 한다.
     comments: ({ id }, _, { client }) =>
+      client.comment.findMany({
         where: { photoId: id },
         include: {
           user: true,
