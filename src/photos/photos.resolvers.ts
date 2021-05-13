@@ -10,11 +10,6 @@ const resolver: Resolvers = {
         where: { photos: { some: { id } } },
       }),
 
-    // hashtags: ({ id }, _, { client }) => {
-    //   //root의 id는 현재 내가찾고자하는 사진의 아이디이다. 이 아이디와 일치하는 아이디는 hashtag의 photos의 id 를 가지고있는 해쉬태그들만을 모아서 값을 보여준다.
-    //   return client.hashtag.findMany({ where: { photos: { some: { id } } } });
-    // },
-
     //포토의 id가 입력받은 아이디와 인자로 받은 아이디와 같다면 그것의 갯수를 센다
     likes: ({ id }, _, { client }) =>
       client.like.count({
@@ -32,6 +27,27 @@ const resolver: Resolvers = {
         return false;
       }
       return userId === loggedInUser.id;
+    },
+
+    //로그인이 되어있지않는다면 좋아요를 누를수없다.
+    //photo로 부터 아이디를 얻고,
+    isLiked: async ({ id }, _, { loggedInUser, client }) => {
+      if (!loggedInUser) {
+        return false;
+      }
+      const ok = await client.like.findUnique({
+        where: {
+          photoId_userId: {
+            photoId: id,
+            userId: loggedInUser.id,
+          },
+        },
+        select: { id: true },
+      });
+      if (ok) {
+        return true;
+      }
+      return false;
     },
   },
 
