@@ -16,16 +16,19 @@ const resolver: Resolvers = {
         where: { photoId: id },
       }),
 
-    //사진의 "id"가 "comment"를 작성하는 사진의 id와 일치해야한다.
     //commentNumber: photo에 붙어있는 comment의 갯수를 센다.
     commentNumber: ({ id }, _, { client }) =>
       client.comment.count({
         where: { photoId: id },
       }),
 
-    //comments: 유일한 photo의 id에서 comments를 찾는다.
+    //photo의 id가 photo의 id인 comments를 찾는다. and comment의 user 정보도 export 한다.
     comments: ({ id }, _, { client }) =>
-      client.photo.findUnique({ where: { id } }).comments(),
+        where: { photoId: id },
+        include: {
+          user: true,
+        },
+      }),
 
     //loggedInUser는 항상 체크를 해주어야한다.
     isMine: ({ userId }, _, { loggedInUser }) => {
