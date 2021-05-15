@@ -21,7 +21,7 @@ export default {
             error: "Can`t find Photo",
           };
         }
-        await client.comment.create({
+        const newComment = await client.comment.create({
           data: {
             //payload, user, photo 필수이다.
             payload,
@@ -29,8 +29,10 @@ export default {
             photo: { connect: { id: photoId } },
           },
         });
+
         return {
           ok: true,
+          id: newComment.id,
         };
       }
     ),
