@@ -5,6 +5,10 @@ const resolvers: Resolvers = {
     seeProfile: async (_, { username }, { client }) =>
       await client.user.findUnique({
         where: { username },
+        include: {
+          following: true,
+          followers: true,
+        },
       }),
   },
 };
