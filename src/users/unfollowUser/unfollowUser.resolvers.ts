@@ -4,16 +4,13 @@ export default {
   Mutation: {
     unfollowUser: protectedResolver(
       async (_, { username }, { loggedInUser, client }) => {
-        const checkUser = await client.user.findUnique({
-          where: {
-            username,
-          },
-          select: { id: true },
+        const ok = await client.user.findUnique({
+          where: { username },
         });
-        if (!checkUser) {
+        if (!ok) {
           return {
             ok: false,
-            error: "Can`t find User",
+            error: "Can't unfollow user.",
           };
         }
         await client.user.update({

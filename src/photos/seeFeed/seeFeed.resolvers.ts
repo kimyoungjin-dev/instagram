@@ -20,7 +20,6 @@ export default {
           },
           take: 5,
           skip: (page - 1) * 5,
-
           orderBy: { createdAt: "desc" },
         });
       }
