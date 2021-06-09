@@ -17,7 +17,7 @@ export default {
             { userId: loggedInUser.id },
           ],
         },
-        take: 2,
+        take: 5,
         skip: offset,
       });
     }),
